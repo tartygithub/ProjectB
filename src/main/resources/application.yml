@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: default
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:oracle:thin:@//localhost:1521/FREEPDB1}
+    username: ${SPRING_DATASOURCE_USERNAME:SYSTEM}
+    password: ${SPRING_DATASOURCE_PASSWORD:OraclePassword123}
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  ldap:
+    urls: ${LDAP_URLS:ldap://localhost:8389}
+    base: ${LDAP_BASE:dc=finance,dc=com}
+    username: ${LDAP_SECURITY_PRINCIPAL:cn=admin,dc=finance,dc=com}
+    password: ${LDAP_SECURITY_CREDENTIALS:admin}
+
+# Custom security configuration properties
+app:
+  security:
+    ldap-enabled: ${SECURITY_LDAP_ENABLED:false} # If false, we fallback to DB authentication
+    basic-validation-regex: ${SECURITY_BASIC_VALIDATION_REGEX:^(?=.*[a-zA-Z])(?=.*\d).{6,}$} # at least 6 characters, 1 letter, 1 number
+    basic-validation-message: ${SECURITY_BASIC_VALIDATION_MESSAGE:Password must be at least 6 characters long and contain at least one letter and one number.}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
