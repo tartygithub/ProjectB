@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=Oracle
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  ldap:
+    urls: ldap://localhost:8389
+    base: dc=finance,dc=com
+    username: cn=admin,dc=finance,dc=com
+    password: admin
+
+app:
+  security:
+    ldap-enabled: false
+    basic-validation-regex: "^(?=.*[a-zA-Z])(?=.*\\d).{6,}$"
+    basic-validation-message: "Password must be at least 6 characters long and contain at least one letter and one number."

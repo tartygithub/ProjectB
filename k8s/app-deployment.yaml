@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financial-message-app
+  labels:
+    app: financial-message-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: financial-message-app
+  template:
+    metadata:
+      labels:
+        app: financial-message-app
+    spec:
+      containers:
+        - name: app
+          image: financial-message-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:oracle:thin:@//oracle-db-service:1521/FREEPDB1"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "SYSTEM"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "OraclePassword123"
+            - name: SECURITY_LDAP_ENABLED
+              value: "false"
+            - name: LDAP_URLS
+              value: "ldap://ldap-service:389"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: financial-message-app-service
+spec:
+  selector:
+    app: financial-message-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
